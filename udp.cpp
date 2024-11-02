@@ -10,11 +10,12 @@ int sendMessage (int sock, char *buf, int size, struct sockaddr_in *sockAddr)
                     sock,
                     buf + sizeSent,
                     size - sizeSent,
-                    MSG_CONFIRM,
+                    0,
                     (struct sockaddr*)sockAddr,
                     sizeof (struct sockaddr_in)
                   ); 
         if (res <= 0) {
+            perror (NULL);
             return -1;
         }
         sizeSent += res;
@@ -23,7 +24,7 @@ int sendMessage (int sock, char *buf, int size, struct sockaddr_in *sockAddr)
 }
 
 int receiveMessage (int sock, char *buf, size_t bufSize, struct sockaddr_in *sockAddr) {
-    socklen_t len = 0;
+    socklen_t len = sizeof(struct sockaddr_in);
     while (true) {
         int size  = recvfrom (
                       sock,
@@ -33,13 +34,13 @@ int receiveMessage (int sock, char *buf, size_t bufSize, struct sockaddr_in *soc
                       (struct sockaddr*)sockAddr,
                       &len
                     ); 
-        if (size < -1) {
-            printf ("Something went wrong with receiving message from server\n");
+        if (size < 0) {
+            perror (NULL);
             return -1;
         }
         if (size < bufSize - 1) {
             buf[size] = '\0';
-            printf ("%s\n", buf);
+            printf ("%s", buf);
             return 0;
         }
         else {
@@ -59,7 +60,6 @@ int communicateTo (int sock, char *buf, size_t bufSize, struct sockaddr_in *sock
         int size = inputMessage (buf, bufSize);
         res = sendMessage (sock, buf, size, sockAddr);
         if (res < 0) {
-            printf ("Something went wrong with sending message to server\n");
             return -1;
         }
         if (size < bufSize) {
@@ -68,10 +68,16 @@ int communicateTo (int sock, char *buf, size_t bufSize, struct sockaddr_in *sock
     }
 }
 
-int communicateFrom (int sock, char *buf, size_t bufSize, struct sockaddr_in *sockAddr) {
+int communicateFrom (int sock, char *buf, size_t bufSize, struct sockaddr_in *sockAddr, bool fromFlag) {
     assert (buf != nullptr);
 
     printf ("< ");
     int status = receiveMessage (sock, buf, bufSize, sockAddr);
+    if (fromFlag) {
+        printf (" from [");
+        printAddress (sockAddr);
+        printf ("]");
+    }
+    printf ("\n");
 }
 

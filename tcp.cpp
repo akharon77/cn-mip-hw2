@@ -18,7 +18,7 @@ int sendMessage (int sock, char *buf, int size)
 int receiveMessage (int sock, char *buf, size_t bufSize) {
     while (true) {
         int size  = recv(sock, buf, bufSize - 1, MSG_NOSIGNAL); 
-        if (size < -1) {
+        if (size < 0) {
             printf ("Something went wrong with receiving message from server\n");
             return -1;
         }
