@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
     char* buf = (char*) calloc (BUFFER_SIZE, sizeof (char));
     struct sockaddr_in clientSockAddr = {};
-    socklen_t len = 0;
+    socklen_t len = sizeof (struct sockaddr_in);
 
     while (true) {
         listen (sock, 1);
