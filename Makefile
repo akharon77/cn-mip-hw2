@@ -1,9 +1,10 @@
 CXX = g++
-CXX_FLAGS = -ggdb3 -std=c++2a
+CXX_FLAGS = -std=c++2a
 
 SRC  = $(wildcard *.cpp)
 OBJ  = $(patsubst %.cpp,%.o,$(SRC))
 DEP  = $(patsubst %.cpp,%.d,$(SRC))
+BIN  = $(wildcard *.out)
 
 all: client_tcp.out client_udp.out server_tcp.out server_udp.out
 
