@@ -15,3 +15,4 @@
 
 int processArgs (int argc, char* argv[], in_addr_t* servAddr, in_port_t* servPort);
 int inputMessage (char* buf, size_t bufSize);
+void printAddress (const sockaddr_in* sockaddr);

@@ -22,11 +22,14 @@ int receiveMessage (int sock, char *buf, size_t bufSize) {
             printf ("Something went wrong with receiving message from server\n");
             return -1;
         }
-        buf[bufSize - 1] = '\0';
-        printf ("%s", buf);
         if (size < bufSize - 1) {
-            printf ("\n");
+            buf[size] = '\0';
+            printf ("%s\n", buf);
             return 0;
+        }
+        else {
+            buf[bufSize - 1] = '\0';
+            printf ("%s", buf);
         }
     }
 }
@@ -57,27 +60,3 @@ int communicateFrom (int sock, char *buf, size_t bufSize) {
     int status = receiveMessage (sock, buf, bufSize);
 }
 
-int communicate (int sock, char* buf, size_t bufSize) {
-    assert (buf != nullptr);
-
-    int res = 0;
-    while (true) {
-        char action = '\0';
-        printf ("[(m)sg/(e)xit]? ");
-        scanf("%c", &action);
-        getchar();
-        if (action == 'e') {
-            return 0;
-        }
-
-        res = communicateTo (sock, buf, bufSize);
-        if (res < 0) {
-            return -1;
-        }
-
-        res = communicateFrom (sock, buf, bufSize);
-        if (res < 0) {
-            return -1;
-        }
-    }
-}

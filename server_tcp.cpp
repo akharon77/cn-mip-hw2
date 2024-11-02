@@ -8,11 +8,17 @@ int communicate (int sock, char* buf, size_t bufSize) {
 
     int res = 0;
     while (true) {
+        res = communicateFrom (sock, buf, bufSize);
+        if (res < 0) {
+            return -1;
+        }
+
         char action = '\0';
         printf ("[(m)sg/(e)xit]? ");
         scanf("%c", &action);
         getchar();
         if (action == 'e') {
+            close (sock);
             return 0;
         }
 
@@ -21,10 +27,6 @@ int communicate (int sock, char* buf, size_t bufSize) {
             return -1;
         }
 
-        res = communicateFrom (sock, buf, bufSize);
-        if (res < 0) {
-            return -1;
-        }
     }
 }
 
@@ -47,7 +49,7 @@ int main(int argc, char* argv[])
     servSockAddr.sin_port = htons(servPort);
     servSockAddr.sin_addr.s_addr = servAddr;
 
-    status = connect (
+    status = bind (
                sock,
                (struct sockaddr*)&servSockAddr, 
                sizeof (servSockAddr)
@@ -59,9 +61,24 @@ int main(int argc, char* argv[])
     }
 
     char* buf = (char*) calloc (BUFFER_SIZE, sizeof (char));
-    status = communicate(sock, buf, BUFFER_SIZE);
-    if (status < 0) {
-        return -1;
+    struct sockaddr_in clientSockAddr = {};
+    socklen_t len = 0;
+
+    while (true) {
+        listen (sock, 1);
+
+
+        int clientSock = accept (
+                           sock,
+                           (struct sockaddr*)&clientSockAddr,
+                           &len
+                         );
+
+        printf ("Connected with ");
+        printAddress (&clientSockAddr);
+        printf ("\n");
+
+        status = communicate (clientSock, buf, BUFFER_SIZE);
     }
 
     free (buf);

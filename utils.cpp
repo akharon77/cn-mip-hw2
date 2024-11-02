@@ -45,3 +45,10 @@ int inputMessage (char* buf, size_t bufSize) {
 
     return i;
 }
+
+void printAddress(const sockaddr_in* sockaddr) {
+  char str[INET_ADDRSTRLEN] = "";
+  inet_ntop(AF_INET, &sockaddr->sin_addr, str, sizeof (str));
+  in_port_t port = ntohs (sockaddr->sin_port);
+  printf ("%s:%hu", str, port);
+}
