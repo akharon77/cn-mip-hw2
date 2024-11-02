@@ -65,6 +65,7 @@ int main(int argc, char* argv[])
     }
 
     free (buf);
+    shutdown (sock, SHUT_RDWR);
     close (sock);
 
     return 0;

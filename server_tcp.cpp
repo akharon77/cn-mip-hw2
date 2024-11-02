@@ -14,12 +14,13 @@ int communicate (int sock, char* buf, size_t bufSize) {
         }
 
         char action = '\0';
-        printf ("[(m)sg/(e)xit]? ");
+        printf ("[(m)sg/(r)efuse]? ");
         scanf("%c", &action);
         getchar();
-        if (action == 'e') {
+        if (action == 'r') {
+            shutdown (sock, SHUT_RDWR);
             close (sock);
-            return 0;
+            return -2;
         }
 
         res = communicateTo (sock, buf, bufSize);
@@ -79,6 +80,14 @@ int main(int argc, char* argv[])
         printf ("\n");
 
         status = communicate (clientSock, buf, BUFFER_SIZE);
+
+        char action = '\0';
+        printf ("[(w)ait, (e)xit]? ");
+        scanf("%c", &action);
+        getchar();
+        if (action == 'e') {
+            break;
+        }
     }
 
     free (buf);
