@@ -1,1 +1,3 @@
-# cn-mip-hw2
+# cn-mipt-hw2
+
+Запускать `<app> <ip> <port>`
